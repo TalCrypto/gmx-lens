@@ -5,8 +5,8 @@ import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Own
 import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
-    /// @custom:storage-location erc7201:logarithm.storage.gmxreader
-    struct GmxReaderStorage {
+    /// @custom:storage-location erc7201:logarithm.storage.gmxlens
+    struct GmxLensStorage {
         address reader;
         address dataStore;
         address oracle;
@@ -39,21 +39,21 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
         uint256 maxOpenInterestUsdShort; // 30 decimals
     }
 
-    // keccak256(abi.encode(uint256(keccak256("logarithm.storage.gmxreader")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32 private constant GmxReaderStorageLocation =
-        0xbce1d4318a1e299492a97d978aca925117f372c83762806dec7145e898132200;
+    // keccak256(abi.encode(uint256(keccak256("logarithm.storage.gmxlens")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant GmxLensStorageLocation =
+        0x46ddb7b117f47e3c543a4da0d79b5a9346fd0f9dececc4cd0df8c125c5135100;
 
     function initialize(address gmxReader, address gmxDataStorage, address gmxOracle) public initializer {
         __Ownable_init(_msgSender());
-        _setGmxReaderStorage(GmxReaderStorage({reader: gmxReader, dataStore: gmxDataStorage, oracle: gmxOracle}));
+        _setGmxLensStorage(GmxLensStorage({reader: gmxReader, dataStore: gmxDataStorage, oracle: gmxOracle}));
     }
 
     function getMarketData(address marketID) external view returns (MarketDataState memory state) {
 
     }
 
-    function getGmxReaderAddresses() public view returns (address reader, address dataStore, address oracle) {
-        GmxReaderStorage storage $ = _getGmxReaderStorage();
+    function getGmxLensAddresses() public view returns (address reader, address dataStore, address oracle) {
+        GmxLensStorage storage $ = _getGmxLensStorage();
         reader = $.reader;
         dataStore = $.dataStore;
         oracle = $.oracle;
@@ -61,14 +61,14 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
 
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
-    function _getGmxReaderStorage() private pure returns (GmxReaderStorage storage $) {
+    function _getGmxLensStorage() private pure returns (GmxLensStorage storage $) {
         assembly {
-            $.slot := GmxReaderStorageLocation
+            $.slot := GmxLensStorageLocation
         }
     }
 
-    function _setGmxReaderStorage(GmxReaderStorage memory value) private {
-        GmxReaderStorage storage $ = _getGmxReaderStorage();
+    function _setGmxLensStorage(GmxLensStorage memory value) private {
+        GmxLensStorage storage $ = _getGmxLensStorage();
         $.reader = value.reader;
         $.dataStore = value.dataStore;
         $.oracle = value.oracle;
