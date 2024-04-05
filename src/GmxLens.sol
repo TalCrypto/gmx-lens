@@ -9,6 +9,7 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
     struct GmxReaderStorage {
         address reader;
         address dataStore;
+        address oracle;
     }
 
     struct MarketDataState {
@@ -42,23 +43,20 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
     bytes32 private constant GmxReaderStorageLocation =
         0xbce1d4318a1e299492a97d978aca925117f372c83762806dec7145e898132200;
 
-    function initialize(address gmxReader, address gmxDataStorage) public initializer {
+    function initialize(address gmxReader, address gmxDataStorage, address gmxOracle) public initializer {
         __Ownable_init(_msgSender());
-        _setGmxReaderStorage(GmxReaderStorage({reader: gmxReader, dataStore: gmxDataStorage}));
-    }
-
-    function setGmxReaderAddresses(address gmxReader, address gmxDataStorage) external onlyOwner {
-        _setGmxReaderStorage(GmxReaderStorage({reader: gmxReader, dataStore: gmxDataStorage}));
+        _setGmxReaderStorage(GmxReaderStorage({reader: gmxReader, dataStore: gmxDataStorage, oracle: gmxOracle}));
     }
 
     function getMarketData(address marketID) external view returns (MarketDataState memory state) {
-        
+
     }
 
-    function getGmxReaderAddresses() public view returns (address reader, address dataStore) {
+    function getGmxReaderAddresses() public view returns (address reader, address dataStore, address oracle) {
         GmxReaderStorage storage $ = _getGmxReaderStorage();
         reader = $.reader;
         dataStore = $.dataStore;
+        oracle = $.oracle;
     }
 
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
@@ -73,5 +71,6 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
         GmxReaderStorage storage $ = _getGmxReaderStorage();
         $.reader = value.reader;
         $.dataStore = value.dataStore;
+        $.oracle = value.oracle;
     }
 }
