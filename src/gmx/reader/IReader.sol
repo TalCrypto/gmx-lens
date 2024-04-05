@@ -8,7 +8,6 @@ import {Price} from "../price/Price.sol";
 import {ReaderUtils} from "./ReaderUtils.sol";
 
 interface IReader {
-    
     /**
      * @notice Get market props
      * @param dataStore The address of gmx dataStore contract
@@ -16,12 +15,10 @@ interface IReader {
      */
     function getMarket(address dataStore, address key) external view returns (Market.Props memory);
 
-    function getMarketInfo(
-        address dataStore,
-        MarketUtils.MarketPrices memory prices,
-        address marketKey
-    ) external view returns (ReaderUtils.MarketInfo memory);
-
+    function getMarketInfo(address dataStore, MarketUtils.MarketPrices memory prices, address marketKey)
+        external
+        view
+        returns (ReaderUtils.MarketInfo memory);
 
     function getMarketTokenPrice(
         address dataStore,
@@ -32,6 +29,4 @@ interface IReader {
         bytes32 pnlFactorType,
         bool maximize
     ) external view returns (int256, MarketPoolValueInfo.Props memory);
-
-
 }

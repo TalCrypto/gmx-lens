@@ -12,7 +12,6 @@ import "../data/Keys.sol";
 // @title MarketUtils
 // @dev Library for market functions
 library MarketUtils {
-
     enum FundingRateChangeType {
         NoChange,
         Increase,
@@ -46,7 +45,6 @@ library MarketUtils {
         bool longsPayShorts;
         uint256 fundingFactorPerSecond;
         int256 nextSavedFundingFactorPerSecond;
-
         PositionType fundingFeeAmountPerSizeDelta;
         PositionType claimableFundingAmountPerSizeDelta;
     }
@@ -75,12 +73,11 @@ library MarketUtils {
     // @param market the market to check
     // @param prices the prices of the market tokens
     // @param isLong whether to get the value for the long or short side
-    function getReservedUsd(
-        IDataStore dataStore,
-        Market.Props memory market,
-        MarketPrices memory prices,
-        bool isLong
-    ) internal view returns (uint256) {
+    function getReservedUsd(IDataStore dataStore, Market.Props memory market, MarketPrices memory prices, bool isLong)
+        internal
+        view
+        returns (uint256)
+    {
         uint256 reservedUsd;
         if (isLong) {
             // for longs calculate the reserved USD based on the open interest and current indexTokenPrice
@@ -107,14 +104,16 @@ library MarketUtils {
     // @param longToken the long token of the market
     // @param shortToken the short token of the market
     // @param isLong whether to check the long or short side
-    function getOpenInterestInTokens(
-        IDataStore dataStore,
-        Market.Props memory market,
-        bool isLong
-    ) internal view returns (uint256) {
+    function getOpenInterestInTokens(IDataStore dataStore, Market.Props memory market, bool isLong)
+        internal
+        view
+        returns (uint256)
+    {
         uint256 divisor = getPoolDivisor(market.longToken, market.shortToken);
-        uint256 openInterestUsingLongTokenAsCollateral = getOpenInterestInTokens(dataStore, market.marketToken, market.longToken, isLong, divisor);
-        uint256 openInterestUsingShortTokenAsCollateral = getOpenInterestInTokens(dataStore, market.marketToken, market.shortToken, isLong, divisor);
+        uint256 openInterestUsingLongTokenAsCollateral =
+            getOpenInterestInTokens(dataStore, market.marketToken, market.longToken, isLong, divisor);
+        uint256 openInterestUsingShortTokenAsCollateral =
+            getOpenInterestInTokens(dataStore, market.marketToken, market.shortToken, isLong, divisor);
 
         return openInterestUsingLongTokenAsCollateral + openInterestUsingShortTokenAsCollateral;
     }
@@ -126,14 +125,16 @@ library MarketUtils {
     // @param shortToken the short token of the market
     // @param isLong whether to get the long or short open interest
     // @return the long or short open interest for a market
-    function getOpenInterest(
-        IDataStore dataStore,
-        Market.Props memory market,
-        bool isLong
-    ) internal view returns (uint256) {
+    function getOpenInterest(IDataStore dataStore, Market.Props memory market, bool isLong)
+        internal
+        view
+        returns (uint256)
+    {
         uint256 divisor = getPoolDivisor(market.longToken, market.shortToken);
-        uint256 openInterestUsingLongTokenAsCollateral = getOpenInterest(dataStore, market.marketToken, market.longToken, isLong, divisor);
-        uint256 openInterestUsingShortTokenAsCollateral = getOpenInterest(dataStore, market.marketToken, market.shortToken, isLong, divisor);
+        uint256 openInterestUsingLongTokenAsCollateral =
+            getOpenInterest(dataStore, market.marketToken, market.longToken, isLong, divisor);
+        uint256 openInterestUsingShortTokenAsCollateral =
+            getOpenInterest(dataStore, market.marketToken, market.shortToken, isLong, divisor);
 
         return openInterestUsingLongTokenAsCollateral + openInterestUsingShortTokenAsCollateral;
     }
@@ -174,5 +175,4 @@ library MarketUtils {
     ) internal view returns (uint256) {
         return dataStore.getUint(Keys.openInterestInTokensKey(market, collateralToken, isLong)) / divisor;
     }
-
 }

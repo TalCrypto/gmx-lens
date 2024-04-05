@@ -10,7 +10,6 @@ import "../market/Market.sol";
 // convers some internal library functions into external functions to reduce
 // the Reader contract size
 library ReaderUtils {
-
     struct VirtualInventory {
         uint256 virtualPoolAmountForLongToken;
         uint256 virtualPoolAmountForShortToken;
@@ -31,5 +30,4 @@ library ReaderUtils {
         VirtualInventory virtualInventory;
         bool isDisabled;
     }
-
 }
