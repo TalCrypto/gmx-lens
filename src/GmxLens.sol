@@ -11,6 +11,33 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
         address dataStore;
     }
 
+    struct MarketDataState {
+        address marketToken;
+        address indexToken;
+        address longToken;
+        address shortToken;
+        uint256 poolValue; // 30 decimals
+        uint256 longTokenAmount; // token decimals
+        uint256 longTokenUsd; // 30 decimals
+        uint256 shortTokenAmount; // token decimals
+        uint256 shortTokenUsd; // 30 decimals
+        int256 openInterestLong; // 30 decimals
+        int256 openInterestShort; // 30 decimals
+        int256 pnlLong; // 30 decimals
+        int256 pnlShort; // 30 decimals
+        int256 netPnl; // 30 decimals
+        uint256 borrowingFactorPerSecondForLongs; // 30 decimals
+        uint256 borrowingFactorPerSecondForShorts; // 30 decimals
+        bool longsPayShorts;
+        uint256 fundingFactorPerSecond; // 30 decimals
+        int256 fundingFactorPerSecondLongs; // 30 decimals
+        int256 fundingFactorPerSecondShorts; // 30 decimals
+        uint256 reservedUsdLong; // 30 decimals
+        uint256 reservedUsdShort; // 30 decimals
+        uint256 maxOpenInterestUsdLong; // 30 decimals
+        uint256 maxOpenInterestUsdShort; // 30 decimals
+    }
+
     // keccak256(abi.encode(uint256(keccak256("logarithm.storage.gmxreader")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant GmxReaderStorageLocation =
         0xbce1d4318a1e299492a97d978aca925117f372c83762806dec7145e898132200;
@@ -22,6 +49,10 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
 
     function setGmxReaderAddresses(address gmxReader, address gmxDataStorage) external onlyOwner {
         _setGmxReaderStorage(GmxReaderStorage({reader: gmxReader, dataStore: gmxDataStorage}));
+    }
+
+    function getMarketData(address marketID) external view returns (MarketDataState memory state) {
+        
     }
 
     function getGmxReaderAddresses() public view returns (address reader, address dataStore) {
