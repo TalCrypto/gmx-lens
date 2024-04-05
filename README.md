@@ -13,6 +13,14 @@ Foundry consists of:
 
 https://book.getfoundry.sh/
 
+## Before Running
+This project uses the [OpenZeppelin Upgrades CLI](https://docs.openzeppelin.com/upgrades-plugins/1.x/api-core) for upgrade safety checks, which are run by default during deployments and upgrades.
+
+If you want to be able to run upgrade safety checks, the following are needed:
+1. Install [Node.js](https://nodejs.org/).
+2. If you are upgrading your contract from a previous version, add the `@custom:oz-upgrades-from <reference>` annotation to the new version of your contract according to [Define Reference Contracts](https://docs.openzeppelin.com/upgrades-plugins/1.x/api-core#define-reference-contracts) or specify the `referenceContract` option when calling the library's functions.
+3. Run `forge clean` before running your Foundry script or tests, or include the `--force` option when running `forge script` or `forge test`.
+
 ## Usage
 
 ### Build
@@ -24,6 +32,7 @@ $ forge build
 ### Test
 
 ```shell
+$ forge clean
 $ forge test
 ```
 

@@ -50,9 +50,9 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
     // keccak256(abi.encode(uint256(keccak256("logarithm.storage.gmxlens")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant GmxLensStorageLocation = 0x46ddb7b117f47e3c543a4da0d79b5a9346fd0f9dececc4cd0df8c125c5135100;
 
-    function initialize(address gmxReader, address gmxDataStorage, address gmxOracle) public initializer {
+    function initialize(address gmxReader, address gmxDataStore, address gmxOracle) public initializer {
         __Ownable_init(_msgSender());
-        _setGmxLensStorage(GmxLensStorage({reader: gmxReader, dataStore: gmxDataStorage, oracle: gmxOracle}));
+        _setGmxLensStorage(GmxLensStorage({reader: gmxReader, dataStore: gmxDataStore, oracle: gmxOracle}));
     }
 
     /**
@@ -107,7 +107,7 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
         state.reservedUsdLong = MarketUtils.getReservedUsd(IDataStore(dataStore), market, marketPrices, true);
         state.reservedUsdShort = MarketUtils.getReservedUsd(IDataStore(dataStore), market, marketPrices, false);
         state.maxOpenInterestUsdLong = MarketUtils.getMaxOpenInterest(IDataStore(dataStore), market.marketToken, true);
-        state.maxOpenInterestUsdShort = MarketUtils.getMaxOpenInterest(IDataStore(dataStore), market.marketToken, false);        
+        state.maxOpenInterestUsdShort = MarketUtils.getMaxOpenInterest(IDataStore(dataStore), market.marketToken, false);
     }
 
     function getGmxLensAddresses() public view returns (address reader, address dataStore, address oracle) {
