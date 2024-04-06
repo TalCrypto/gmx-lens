@@ -32,8 +32,7 @@ $ forge build
 ### Test
 
 ```shell
-$ forge clean
-$ forge test
+$ npm run test
 ```
 
 ### Format
