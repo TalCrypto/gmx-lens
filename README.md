@@ -56,7 +56,13 @@ $ anvil
 ### Deploy
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+$ source .env
+
+# To deploy and verify our contract onto Arbitrum One
+$ forge script script/01_GmxLensDeploy.s.sol:GmxLensArbiDeployScript --rpc-url $ARBITRUM_ONE_RPC_URL --broadcast --verify -vvvv
+
+# To deploy and verify our contract onto Avalanche
+$ forge script script/01_GmxLensDeploy.s.sol:GmxLensAvaDeployScript --rpc-url $AVALANCHE_RPC_URL --broadcast --verify -vvvv
 ```
 
 ### Cast
