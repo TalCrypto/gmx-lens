@@ -17,7 +17,6 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
     struct GmxLensStorage {
         address reader;
         address dataStore;
-        address oracle;
     }
 
     struct MarketDataState {
@@ -50,25 +49,25 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
     // keccak256(abi.encode(uint256(keccak256("logarithm.storage.gmxlens")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant GmxLensStorageLocation = 0x46ddb7b117f47e3c543a4da0d79b5a9346fd0f9dececc4cd0df8c125c5135100;
 
-    function initialize(address gmxReader, address gmxDataStore, address gmxOracle) public initializer {
+    function initialize(address gmxReader, address gmxDataStore) public initializer {
         __Ownable_init(_msgSender());
-        _setGmxLensStorage(GmxLensStorage({reader: gmxReader, dataStore: gmxDataStore, oracle: gmxOracle}));
+        _setGmxLensStorage(GmxLensStorage({reader: gmxReader, dataStore: gmxDataStore}));
     }
 
     /**
+     * @notice GMX uses an offchain price data that is verifiable by chainlink verifier smart contract
      * @param marketID The address of market token
+     * @param marketPrices Offchain price data provided by chainlink
      * @return state MarketDataState
      */
-    function getMarketData(address marketID) external view returns (MarketDataState memory state) {
-        (address reader, address dataStore, address oracle) = getGmxLensAddresses();
+    function getMarketData(address marketID, MarketUtils.MarketPrices calldata marketPrices) external view returns (MarketDataState memory state) {
+        (address reader, address dataStore) = getGmxLensAddresses();
         Market.Props memory market = IReader(reader).getMarket(dataStore, marketID);
 
         state.marketToken = market.marketToken;
         state.indexToken = market.indexToken;
         state.longToken = market.longToken;
         state.shortToken = market.shortToken;
-
-        MarketUtils.MarketPrices memory marketPrices = MarketUtils.getMarketPrices(IOracle(oracle), market);
 
         bytes32 pnlFactorType = Keys.MAX_PNL_FACTOR_FOR_DEPOSITS;
         bool maximize = true;
@@ -110,11 +109,10 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
         state.maxOpenInterestUsdShort = MarketUtils.getMaxOpenInterest(IDataStore(dataStore), market.marketToken, false);
     }
 
-    function getGmxLensAddresses() public view returns (address reader, address dataStore, address oracle) {
+    function getGmxLensAddresses() public view returns (address reader, address dataStore) {
         GmxLensStorage storage $ = _getGmxLensStorage();
         reader = $.reader;
         dataStore = $.dataStore;
-        oracle = $.oracle;
     }
 
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
@@ -129,6 +127,5 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
         GmxLensStorage storage $ = _getGmxLensStorage();
         $.reader = value.reader;
         $.dataStore = value.dataStore;
-        $.oracle = value.oracle;
     }
 }
