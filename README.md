@@ -66,6 +66,13 @@ If you want to be able to run upgrade safety checks, the following are needed:
 
 ## Usage
 
+### Install Dependencies
+
+```shell
+$ npm install
+$ forge install
+```
+
 ### Configuration
 
 Run below cmd and then fill it with the parameters in .env.example
