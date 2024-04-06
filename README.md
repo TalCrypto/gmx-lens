@@ -1,6 +1,6 @@
 ## Description
 
-GMX ==does use offchain price providers== of Chainlink, of which values are signed by operators and verified when excuting transactions.
+GMX <mark>does use offchain price providers<mark> of Chainlink, of which values are signed by operators and verified when excuting transactions.
 So we have to input the oracle prices as the data lens function's parameter.
 
 The Oracle smart contract of GMX stores the oracle prices only when executing a transaction.
