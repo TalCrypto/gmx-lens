@@ -1,17 +1,60 @@
-## Foundry
+## Description
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+GMX ==does use offchain price providers== of Chainlink, of which values are signed by operators and verified when excuting transactions.
+So we have to input the oracle prices as the data lens function's parameter.
 
-Foundry consists of:
+The Oracle smart contract of GMX stores the oracle prices only when executing a transaction.
+Once the transantion has been executed, then the oracle price values of the Oracle smart contract get cleared.
+That's why we can't use onchain oracle prices while reading smart contracts.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
+For example, let's see `executeLiquidation` funtion
+https://github.com/gmx-io/gmx-synthetics/blob/178290846694d65296a14b9f4b6ff9beae28a7f7/contracts/exchange/LiquidationHandler.sol#L32-L50
+```python:
+    // @dev executes a position liquidation
+    // @param account the account of the position to liquidate
+    // @param market the position's market
+    // @param collateralToken the position's collateralToken
+    // @param isLong whether the position is long or short
+    // @param oracleParams OracleUtils.SetPricesParams
+    function executeLiquidation(
+        address account,
+        address market,
+        address collateralToken,
+        bool isLong,
+        OracleUtils.SetPricesParams calldata oracleParams
+    ) external
+        globalNonReentrant
+        onlyLiquidationKeeper
+@>>     withOraclePrices(oracle, dataStore, eventEmitter, oracleParams)
+    {
+        uint256 startingGas = gasleft();
+```
+https://github.com/gmx-io/gmx-synthetics/blob/178290846694d65296a14b9f4b6ff9beae28a7f7/contracts/oracle/OracleModule.sol#L13-L35
+```python:
+    // @dev sets oracle prices, perform any additional tasks required,
+    // and clear the oracle prices after
+    //
+    // care should be taken to avoid re-entrancy while using this call
+    // since re-entrancy could allow functions to be called with prices
+    // meant for a different type of transaction
+    // the tokensWithPrices.length check in oracle.setPrices should help
+    // mitigate this
+    //
+    // @param oracle Oracle
+    // @param dataStore DataStore
+    // @param eventEmitter EventEmitter
+    // @param params OracleUtils.SetPricesParams
+    modifier withOraclePrices(
+        Oracle oracle,
+        DataStore dataStore,
+        EventEmitter eventEmitter,
+        OracleUtils.SetPricesParams memory params
+    ) {
+@>>     oracle.setPrices(dataStore, eventEmitter, params);
+        _;
+@>>     oracle.clearAllPrices();
+    }
+```
 
 ## Before Running
 This project uses the [OpenZeppelin Upgrades CLI](https://docs.openzeppelin.com/upgrades-plugins/1.x/api-core) for upgrade safety checks, which are run by default during deployments and upgrades.
@@ -22,6 +65,13 @@ If you want to be able to run upgrade safety checks, the following are needed:
 3. Run `forge clean` before running your Foundry script or tests, or include the `--force` option when running `forge script` or `forge test`.
 
 ## Usage
+
+### Configuration
+
+Run below cmd and then fill it with the parameters in .env.example
+```shell
+$ touch .env
+```
 
 ### Build
 
