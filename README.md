@@ -58,6 +58,8 @@ $ anvil
 ```shell
 $ source .env
 
+$ forge clean
+
 # To deploy and verify our contract onto Arbitrum One
 $ forge script script/01_GmxLensDeploy.s.sol:GmxLensArbiDeployScript --rpc-url $ARBITRUM_ONE_RPC_URL --broadcast --verify -vvvv
 

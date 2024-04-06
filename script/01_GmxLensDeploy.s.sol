@@ -5,6 +5,7 @@ import {Script, console} from "forge-std/Script.sol";
 import {Upgrades} from "openzeppelin-foundry-upgrades/Upgrades.sol";
 import {ArbitrumOneAddresses} from "../src/config/ArbitrumOneAddresses.sol";
 import {AvalancheAddresses} from "../src/config/AvalancheAddresses.sol";
+import {GmxLens} from "../src/GmxLens.sol";
 
 contract GmxLensArbiDeployScript is Script {
     function setUp() public {}
