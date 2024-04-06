@@ -13,6 +13,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 contract GmxLensTest is Test {
     using stdJson for string;
+
     address public constant ArbiEthMarketID = 0x70d95587d40A2caf56bd97485aB3Eec10Bee6336;
     address public constant ArbiDogeMarketID = 0x6853EA96FF216fAb11D2d930CE3C508556A4bdc4;
 
@@ -37,11 +38,11 @@ contract GmxLensTest is Test {
         gmxLens = GmxLens(proxy);
     }
 
-    function test_fork() public view{
+    function test_fork() public view {
         assertEq(vm.activeFork(), arbitrumFork);
     }
 
-    function test_getMarketData() public view{
+    function test_getMarketData() public view {
         (address reader, address dataStore) = gmxLens.getGmxLensAddresses();
         Market.Props memory market = IReader(reader).getMarket(dataStore, ArbiDogeMarketID);
         MarketUtils.MarketPrices memory marketPrices;
@@ -52,25 +53,26 @@ contract GmxLensTest is Test {
 
         OffchainPrice memory data;
 
-        for(uint i; i<20; i++) {
-            bytes memory priceData = json.parseRaw(string(abi.encodePacked(abi.encodePacked(".data[", Strings.toString(i)), "]")));
+        for (uint256 i; i < 20; i++) {
+            bytes memory priceData =
+                json.parseRaw(string(abi.encodePacked(abi.encodePacked(".data[", Strings.toString(i)), "]")));
             data = abi.decode(priceData, (OffchainPrice));
-            
-            if(data.tokenAddress == market.indexToken) {
+
+            if (data.tokenAddress == market.indexToken) {
                 marketPrices.indexTokenPrice.min = data.minPrice;
                 marketPrices.indexTokenPrice.max = data.maxPrice;
             }
-            if(data.tokenAddress == market.longToken) {
+            if (data.tokenAddress == market.longToken) {
                 marketPrices.longTokenPrice.min = data.minPrice;
                 marketPrices.longTokenPrice.max = data.maxPrice;
             }
-            if(data.tokenAddress == market.shortToken) {
+            if (data.tokenAddress == market.shortToken) {
                 marketPrices.shortTokenPrice.min = data.minPrice;
                 marketPrices.shortTokenPrice.max = data.maxPrice;
             }
-        } 
+        }
 
-        GmxLens.MarketDataState memory state =  gmxLens.getMarketData(ArbiDogeMarketID, marketPrices);
+        GmxLens.MarketDataState memory state = gmxLens.getMarketData(ArbiDogeMarketID, marketPrices);
         console2.log("marketToken:      ", state.marketToken);
         console2.log("indexToken:       ", state.indexToken);
         console2.log("longToken:        ", state.longToken);

@@ -60,7 +60,11 @@ contract GmxLens is UUPSUpgradeable, OwnableUpgradeable {
      * @param marketPrices Offchain price data provided by chainlink
      * @return state MarketDataState
      */
-    function getMarketData(address marketID, MarketUtils.MarketPrices calldata marketPrices) external view returns (MarketDataState memory state) {
+    function getMarketData(address marketID, MarketUtils.MarketPrices calldata marketPrices)
+        external
+        view
+        returns (MarketDataState memory state)
+    {
         (address reader, address dataStore) = getGmxLensAddresses();
         Market.Props memory market = IReader(reader).getMarket(dataStore, marketID);
 
